@@ -10,6 +10,20 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Trash2 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { ChevronDownIcon } from "lucide-react";
+import { format } from "date-fns";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogFooter,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogAction
+} from "@/components/ui/alert-dialog";
+
 
 // this defines the party structure
 type Party = {
@@ -65,6 +79,35 @@ export default function NewInvoice() {
         zip: "",
         country: "",
     });
+
+    // logo
+    const [logoFile, setLogoFile] = useState<string | null>(null);
+
+    // signature
+    const [signatureFile, setSignatureFile] = useState<string | null>(null);
+
+    const [showSaveDialog, setShowSaveDialog] = useState(false);
+
+
+
+    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => setLogoFile(reader.result as string);
+        reader.readAsDataURL(file);
+    };
+
+    const handleSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => setSignatureFile(reader.result as string);
+        reader.readAsDataURL(file);
+    };
+
 
     // this stores invoice meta
     const [issueDate, setIssueDate] = useState<string>("");
@@ -133,59 +176,59 @@ export default function NewInvoice() {
     const downloadPDF = async () => {
         if (!previewRef.current) return;
 
-        const html = document.documentElement;
-        const wasDark = html.classList.contains("dark");
-        html.classList.remove("dark");
-
-        await new Promise((r) => setTimeout(r, 120));
-
         const canvas = await html2canvas(previewRef.current, {
             scale: 2,
             backgroundColor: "#FFFFFF",
             useCORS: true,
+
+            // apply forced light-mode INSIDE cloned DOM ONLY
             onclone: (doc) => {
+                const root = doc.querySelector("html");
+
+                // force light mode in clone — NOT in real page
+                root?.classList.remove("dark");
+
+                // fix OKLCH colors
                 const all = doc.querySelectorAll("*");
                 all.forEach((el: any) => {
-                    const style = window.getComputedStyle(el);
+                    const style = getComputedStyle(el);
 
-                    if (style.backgroundColor.includes("oklch")) el.style.backgroundColor = "white";
-                    if (style.color.includes("oklch")) el.style.color = "black";
-                    if (style.borderColor.includes("oklch")) el.style.borderColor = "black";
+                    if (style.backgroundColor.includes("oklch"))
+                        el.style.backgroundColor = "white";
+
+                    if (style.color.includes("oklch"))
+                        el.style.color = "black";
+
+                    if (style.borderColor.includes("oklch"))
+                        el.style.borderColor = "black";
                 });
-            }
+            },
         });
 
-        if (wasDark) html.classList.add("dark");
-
         const imgData = canvas.toDataURL("image/png");
-
         const pdf = new jsPDF("p", "pt", "a4");
 
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Your custom padding values
         const paddingTop = 40;
         const paddingBottom = 40;
-
-        // Scale to fit inside padded area
         const availableHeight = pageHeight - paddingTop - paddingBottom;
 
         const imgWidth = canvas.width;
         const imgHeight = canvas.height;
 
         const scale = Math.min(pageWidth / imgWidth, availableHeight / imgHeight);
-
         const finalWidth = imgWidth * scale;
         const finalHeight = imgHeight * scale;
 
-        // Center horizontally, position vertically with padding
         const x = (pageWidth - finalWidth) / 2;
         const y = paddingTop;
 
         pdf.addImage(imgData, "PNG", x, y, finalWidth, finalHeight);
-        pdf.save(`invoice_${invoiceNumber || "draft"}.pdf`);
+        pdf.save(`invoice_${invoiceNumber || ""}.pdf`);
     };
+
 
 
     // this saves the invoice to localStorage
@@ -208,15 +251,17 @@ export default function NewInvoice() {
             accountName,
             upiId,
             upiName,
-            // removed template
             total,
             savedAt: new Date().toISOString(),
         };
+
         const saved = JSON.parse(localStorage.getItem("invoices") || "[]");
         saved.push(invoice);
         localStorage.setItem("invoices", JSON.stringify(saved));
-        alert("Invoice saved");
+
+        setShowSaveDialog(true);
     };
+
 
     // this renders the layout
     return (
@@ -234,9 +279,7 @@ export default function NewInvoice() {
                     <h1 className="text-2xl md:text-3xl font-bold">Create Invoice</h1>
 
                     <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => window.history.back()}>
-                            Cancel
-                        </Button>
+
                         <Button variant="secondary" onClick={saveInvoice}>
                             Save Invoice
                         </Button>
@@ -322,14 +365,57 @@ export default function NewInvoice() {
                 <section>
                     <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
                     <div className="grid md:grid-cols-2 gap-4">
+
+                        {/* Issue Date */}
                         <div>
-                            <label className="text-sm font-medium">Issue date</label>
-                            <Input type="date" value={issueDate} onChange={(e) => setIssueDate(e.target.value)} />
+                            <label className="text-sm font-medium">Issue Date</label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-between mt-1">
+                                        {issueDate ? format(issueDate, "PPP") : "Select date"}
+                                        <ChevronDownIcon className="h-4 w-4 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={issueDate ? new Date(issueDate) : undefined}
+                                        onSelect={(d) => {
+                                            if (!d) return;
+                                            setIssueDate(format(d, "yyyy-MM-dd"));
+                                        }}
+                                        captionLayout="dropdown"
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
+
+                        {/* Due Date */}
                         <div>
-                            <label className="text-sm font-medium">Due date</label>
-                            <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+                            <label className="text-sm font-medium">Due Date</label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-between mt-1">
+                                        {dueDate ? format(dueDate, "PPP") : "Select date"}
+                                        <ChevronDownIcon className="h-4 w-4 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={dueDate ? new Date(dueDate) : undefined}
+                                        onSelect={(d) => {
+                                            if (!d) return;
+                                            setDueDate(format(d, "yyyy-MM-dd"));
+                                        }}
+                                        captionLayout="dropdown"
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
+
+
+
                         <div>
                             <label className="text-sm font-medium">Currency</label>
                             <Input placeholder="INR or USD" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} />
@@ -340,8 +426,65 @@ export default function NewInvoice() {
                         </div>
                     </div>
 
-                    {/* removed template selector */}
                 </section>
+
+                {/* Company Logo & Signature */}
+                <section>
+                    <h2 className="text-xl font-semibold mb-4">Branding</h2>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+
+                        {/* Logo Upload */}
+                        <div>
+                            <label className="text-sm font-medium">Upload Logo</label>
+                            <Input
+                                type="file"
+                                accept="image/*"
+                                className="mt-2 cursor-pointer"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+                                    const reader = new FileReader();
+                                    reader.onload = () => setLogoFile(reader.result as string);
+                                    reader.readAsDataURL(file);
+                                }}
+                            />
+
+                            {logoFile && (
+                                <img
+                                    src={logoFile}
+                                    className="mt-3 h-20 object-contain rounded-md border"
+                                />
+                            )}
+                        </div>
+
+                        {/* Signature Upload */}
+                        <div>
+                            <label className="text-sm font-medium">Upload Signature</label>
+                            <Input
+                                type="file"
+                                accept="image/*"
+                                className="mt-2 cursor-pointer"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+                                    const reader = new FileReader();
+                                    reader.onload = () => setSignatureFile(reader.result as string);
+                                    reader.readAsDataURL(file);
+                                }}
+                            />
+
+                            {signatureFile && (
+                                <img
+                                    src={signatureFile}
+                                    className="mt-3 h-20 object-contain rounded-md border"
+                                />
+                            )}
+                        </div>
+
+                    </div>
+                </section>
+
 
                 {/* payment details */}
                 <section>
@@ -485,155 +628,188 @@ export default function NewInvoice() {
             </div>
 
             {/* right preview */}
-            <div className="w-full lg:w-[40%] p-6 md:p-8 lg:p-10 bg-white dark:bg-neutral-900 border-t lg:border-l dark:border-neutral-700 shadow-xl">
+            <div className="w-full lg:w-[40%] bg-white dark:bg-neutral-900 border-t lg:border-l dark:border-neutral-700 shadow-xl">
 
-                <div
-                    ref={previewRef}
-                    className="max-w-[700px] mx-auto bg-white dark:bg-neutral-900 text-black dark:text-white rounded-xl border dark:border-neutral-700 p-6 md:p-8"
-                    style={{ overflow: "visible" }}
-                >
+                {/* Sticky wrapper */}
+                <div className="p-6 md:p-8 lg:p-10 sticky top-4 overflow-auto max-h-[calc(100vh-2rem)]">
 
+                    <div
+                        ref={previewRef}
+                        className="max-w-[700px] mx-auto bg-white dark:bg-neutral-900 text-black dark:text-white rounded-xl border dark:border-neutral-700 p-6 md:p-8"
+                        style={{ overflow: "visible" }}
+                    >
 
-                    <div className="flex items-start justify-between gap-4">
-                        <div>
-                            <h2 className="text-2xl font-extrabold tracking-tight">INVOICE</h2>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">#{invoiceNumber || "-"}</p>
+                        {logoFile && (
+                            <div className="mb-6 flex justify-start">
+                                <img src={logoFile} className="h-16 object-contain" />
+                            </div>
+                        )}
+
+                        <div className="flex items-start justify-between gap-4">
+                            <div>
+                                <h2 className="text-2xl font-extrabold tracking-tight">INVOICE</h2>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">#{invoiceNumber || "-"}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Issue: {issueDate || "-"}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Due: {dueDate || "-"}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Currency: {currency}</p>
+                            </div>
                         </div>
-                        <div className="text-right">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Issue: {issueDate || "-"}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Due: {dueDate || "-"}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Currency: {currency}</p>
-                        </div>
-                    </div>
 
-                    <Separator className="my-6" />
+                        <Separator className="my-6" />
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 className="font-semibold mb-2">From</h3>
-                            <p className="text-sm leading-6">
-                                {from.name || "-"}<br />
-                                {from.address && <>{from.address}<br /></>}
-                                {(from.city || from.zip) && <>{[from.city, from.zip].filter(Boolean).join(" ")}<br /></>}
-                                {from.country && <>{from.country}<br /></>}
-                                {from.email && <>{from.email}<br /></>}
-                                {from.phone}
-                            </p>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-2">Bill To</h3>
-                            <p className="text-sm leading-6">
-                                {to.name || "-"}<br />
-                                {to.address && <>{to.address}<br /></>}
-                                {(to.city || to.zip) && <>{[to.city, to.zip].filter(Boolean).join(" ")}<br /></>}
-                                {to.country && <>{to.country}<br /></>}
-                                {to.email && <>{to.email}<br /></>}
-                                {to.phone}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="mt-6 overflow-hidden border dark:border-neutral-700 rounded-lg">
-                        <table className="w-full text-sm">
-                            <thead className="bg-gray-50 dark:bg-neutral-800">
-                                <tr>
-                                    <th className="text-left p-3">Item</th>
-                                    <th className="text-right p-3">Qty</th>
-                                    <th className="text-right p-3">Rate</th>
-                                    <th className="text-right p-3">Tax %</th>
-                                    <th className="text-right p-3">Line Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {items.map((it) => {
-                                    const line = (Number(it.qty) || 0) * (Number(it.rate) || 0);
-                                    return (
-                                        <tr key={it.id} className="border-t dark:border-neutral-700 align-top">
-                                            <td className="p-3">
-                                                <div className="font-medium">{it.name || "-"}</div>
-                                                {it.description ? (
-                                                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                                        {it.description}
-                                                    </div>
-                                                ) : null}
-                                            </td>
-                                            <td className="p-3 text-right">{Number(it.qty) || 0}</td>
-                                            <td className="p-3 text-right">{fmt(Number(it.rate) || 0)}</td>
-                                            <td className="p-3 text-right">{Number(it.taxPct) || 0}%</td>
-                                            <td className="p-3 text-right">{fmt(line)}</td>
-                                        </tr>
-                                    );
-                                })}
-                                {items.length === 0 && (
-                                    <tr>
-                                        <td className="p-3 text-center text-gray-500" colSpan={5}>
-                                            No items added
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="mt-6 grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 className="font-semibold mb-2">Notes</h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{notes || "-"}</p>
-                            <h4 className="font-semibold mt-4 mb-2">Payment Terms</h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{terms || "-"}</p>
-
-                            <div className="mt-6">
-                                <h4 className="font-semibold mb-2">Payment Details</h4>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 className="font-semibold mb-2">From</h3>
                                 <p className="text-sm leading-6">
-                                    {bankName && <>Bank: {bankName}<br /></>}
-                                    {accountNumber && <>Account No: {accountNumber}<br /></>}
-                                    {accountName && <>Account Name: {accountName}<br /></>}
-                                    {upiId && <>UPI ID: {upiId}<br /></>}
-                                    {upiName && <>UPI Name: {upiName}<br /></>}
+                                    {from.name || "-"}<br />
+                                    {from.address && <>{from.address}<br /></>}
+                                    {(from.city || from.zip) && <>{[from.city, from.zip].filter(Boolean).join(" ")}<br /></>}
+                                    {from.country && <>{from.country}<br /></>}
+                                    {from.email && <>{from.email}<br /></>}
+                                    {from.phone}
+                                </p>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold mb-2">Bill To</h3>
+                                <p className="text-sm leading-6">
+                                    {to.name || "-"}<br />
+                                    {to.address && <>{to.address}<br /></>}
+                                    {(to.city || to.zip) && <>{[to.city, to.zip].filter(Boolean).join(" ")}<br /></>}
+                                    {to.country && <>{to.country}<br /></>}
+                                    {to.email && <>{to.email}<br /></>}
+                                    {to.phone}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 dark:bg-neutral-800 rounded-lg p-4 border dark:border-neutral-700">
-                            <div className="flex justify-between py-1">
-                                <span>Subtotal</span>
-                                <span className="font-medium">{fmt(subtotal)}</span>
+                        <div className="mt-6 overflow-hidden border dark:border-neutral-700 rounded-lg">
+                            <table className="w-full text-sm">
+                                <thead className="bg-gray-50 dark:bg-neutral-800">
+                                    <tr>
+                                        <th className="text-left p-3">Item</th>
+                                        <th className="text-right p-3">Qty</th>
+                                        <th className="text-right p-3">Rate</th>
+                                        <th className="text-right p-3">Tax %</th>
+                                        <th className="text-right p-3">Line Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {items.map((it) => {
+                                        const line = (Number(it.qty) || 0) * (Number(it.rate) || 0);
+                                        return (
+                                            <tr key={it.id} className="border-t dark:border-neutral-700 align-top">
+                                                <td className="p-3">
+                                                    <div className="font-medium">{it.name || "-"}</div>
+                                                    {it.description ? (
+                                                        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                                            {it.description}
+                                                        </div>
+                                                    ) : null}
+                                                </td>
+                                                <td className="p-3 text-right">{Number(it.qty) || 0}</td>
+                                                <td className="p-3 text-right">{fmt(Number(it.rate) || 0)}</td>
+                                                <td className="p-3 text-right">{Number(it.taxPct) || 0}%</td>
+                                                <td className="p-3 text-right">{fmt(line)}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                    {items.length === 0 && (
+                                        <tr>
+                                            <td className="p-3 text-center text-gray-500" colSpan={5}>
+                                                No items added
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="mt-6 grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 className="font-semibold mb-2">Notes</h4>
+                                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{notes || "-"}</p>
+                                <h4 className="font-semibold mt-4 mb-2">Payment Terms</h4>
+                                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{terms || "-"}</p>
+
+                                <div className="mt-6">
+                                    <h4 className="font-semibold mb-2">Payment Details</h4>
+                                    <p className="text-sm leading-6">
+                                        {bankName && <>Bank: {bankName}<br /></>}
+                                        {accountNumber && <>Account No: {accountNumber}<br /></>}
+                                        {accountName && <>Account Name: {accountName}<br /></>}
+                                        {upiId && <>UPI ID: {upiId}<br /></>}
+                                        {upiName && <>UPI Name: {upiName}<br /></>}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="flex justify-between py-1">
-                                <span>Per item tax</span>
-                                <span className="font-medium">{fmt(perItemTaxTotal)}</span>
-                            </div>
-                            <div className="flex justify-between py-1">
-                                <span>Discount</span>
-                                <span className="font-medium">- {fmt(discount || 0)}</span>
-                            </div>
-                            <div className="flex justify-between py-1">
-                                <span>Shipping</span>
-                                <span className="font-medium">{fmt(shipping || 0)}</span>
-                            </div>
-                            <Separator className="my-3" />
-                            <div className="flex justify-between py-1 text-lg font-bold">
-                                <span>Total</span>
-                                <span>{fmt(total)}</span>
+
+                            {signatureFile && (
+                                <div className="mt-10 text-right">
+                                    <p className="text-sm mb-2 text-gray-600 dark:text-gray-400">Authorized Signature</p>
+                                    <img src={signatureFile} className="h-20 object-contain ml-auto" />
+                                </div>
+                            )}
+
+                            <div className="bg-gray-50 dark:bg-neutral-800 rounded-lg p-4 border dark:border-neutral-700">
+                                <div className="flex justify-between py-1">
+                                    <span>Subtotal</span>
+                                    <span className="font-medium">{fmt(subtotal)}</span>
+                                </div>
+                                <div className="flex justify-between py-1">
+                                    <span>Per item tax</span>
+                                    <span className="font-medium">{fmt(perItemTaxTotal)}</span>
+                                </div>
+                                <div className="flex justify-between py-1">
+                                    <span>Discount</span>
+                                    <span className="font-medium">- {fmt(discount || 0)}</span>
+                                </div>
+                                <div className="flex justify-between py-1">
+                                    <span>Shipping</span>
+                                    <span className="font-medium">{fmt(shipping || 0)}</span>
+                                </div>
+                                <Separator className="my-3" />
+                                <div className="flex justify-between py-1 text-lg font-bold">
+                                    <span>Total</span>
+                                    <span>{fmt(total)}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* actions for small screens */}
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <Button variant="outline" onClick={() => window.history.back()}>Cancel</Button>
-                    <Button variant="secondary" onClick={saveInvoice}>Save</Button>
-                    <Button className="bg-[#4f46e5] hover:bg-[#4338ca] text-white" onClick={downloadPDF}>Download PDF</Button>
+                    {/* actions for small screens */}
+                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <Button variant="secondary" onClick={saveInvoice}>Save</Button>
+                        <Button className="bg-[#4f46e5] hover:bg-[#4338ca] text-white" onClick={downloadPDF}>Download PDF</Button>
+                    </div>
+
                 </div>
             </div>
+
+            {/* Save Confirmation Dialog */}
+            <AlertDialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Invoice Saved</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Your invoice has been saved successfully.
+                            You can find it inside <strong>Saved Invoices</strong>.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                        <AlertDialogAction onClick={() => setShowSaveDialog(false)}>
+                            OK
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+
         </div>
     );
 }
-
-
-
-
 
 
 

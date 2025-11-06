@@ -39,7 +39,7 @@ function App() {
         element={
           <>
             <SignedIn>
-              <NewInvoice />   {/* ✅ your full builder UI */}
+              <NewInvoice />   
             </SignedIn>
 
             <SignedOut>
