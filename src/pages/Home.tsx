@@ -15,7 +15,7 @@ import {
 export default function Home() {
   return (
     <main className="min-h-screen bg-lightBg dark:bg-darkBg text-[#1B1B1B] dark:text-white transition-colors">
-      
+
       {/* Header */}
       <Header />
 
@@ -30,7 +30,7 @@ export default function Home() {
             transition={{ duration: 0.7 }}
           >
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
-              The Smarter Way to  
+              The Smarter Way to
               <span className="text-[#4f46e5]"> Create Invoices</span>
             </h1>
 
@@ -179,7 +179,6 @@ export default function Home() {
           </a>
         </div>
       </section>
-
       {/* FAQ SECTION */}
       <section className="px-6 md:px-12 py-20 max-w-5xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
@@ -188,34 +187,61 @@ export default function Home() {
 
         <Accordion type="single" collapsible className="space-y-4">
           <AccordionItem value="item-1">
-            <AccordionTrigger>Is fluxInvoice free?</AccordionTrigger>
+            <AccordionTrigger>Is FluxInvoice completely free to use?</AccordionTrigger>
             <AccordionContent>
-              Yes — the core builder runs fully in your browser.
+              Yes — all invoice-building features, including line items, taxes,
+              discounts, logo uploads, and PDF export, are completely free and run
+              directly inside your browser with no usage limits.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-2">
-            <AccordionTrigger>Can I export invoices as PDF?</AccordionTrigger>
+            <AccordionTrigger>Can I create professional PDFs?</AccordionTrigger>
             <AccordionContent>
-              Yes — professional PDF export is built-in.
+              Absolutely. FluxInvoice generates high-resolution, print-ready PDFs.
+              They are formatted automatically to fit a single clean page, making them
+              suitable for sharing with clients or including in official documentation.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-3">
-            <AccordionTrigger>Do I need an account?</AccordionTrigger>
+            <AccordionTrigger>What happens to my saved invoices?</AccordionTrigger>
             <AccordionContent>
-              Signing in lets you sync settings, but the builder works without it.
+              Your invoices are stored securely in your browser using LocalStorage.
+              They never leave your device, ensuring privacy and allowing you to
+              access them instantly without waiting for sync or loading times.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-4">
-            <AccordionTrigger>Is my data stored safely?</AccordionTrigger>
+            <AccordionTrigger>Do I need an account to use the builder?</AccordionTrigger>
             <AccordionContent>
-              Yes — all invoice data is stored locally on your device.
+              No account is required to create, save, and download invoices. However,
+              signing in allows you to unlock extra features such as dashboard access,
+              multi-device consistency, and a more personalized experience.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-5">
+            <AccordionTrigger>Can I customize items, taxes, and totals?</AccordionTrigger>
+            <AccordionContent>
+              Yes, you can add unlimited line items, apply individual tax
+              percentages, include optional descriptions, and adjust charges like
+              discounts and shipping. The totals update automatically in real time.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-6">
+            <AccordionTrigger>Does FluxInvoice support logos and brand identity?</AccordionTrigger>
+            <AccordionContent>
+              Yes, you can upload a high-quality logo and it will appear instantly in
+              the invoice preview and the final PDF. This helps maintain your brand's
+              professionalism when sending invoices to clients.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </section>
+
 
       {/* FOOTER */}
       <footer className="border-t dark:border-neutral-700 py-6 text-center text-gray-700 dark:text-gray-300">

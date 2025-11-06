@@ -6,6 +6,7 @@ import { Moon, Sun, Menu, X } from "lucide-react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
@@ -26,40 +27,58 @@ export default function Header() {
       "
       >
         {/* Logo */}
-        <a
-          href="/"
-          className="text-xl font-bold tracking-tight text-black dark:text-white"
-        >
-          FluxInvoice
-        </a>
+        <Link to="/" aria-label="FluxInvoice logo" className="group inline-flex items-center gap-2">
+          <span
+            className="
+      text-2xl md:text-[28px] font-extrabold tracking-tight
+      [font-feature-settings:'ss01','ss02','cv11'] 
+      bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
+      bg-clip-text text-transparent
+      transition-transform duration-300 group-hover:scale-[1.02]
+    "
+          >
+            Flux
+            <span className="text-black dark:text-white bg-clip-text">
+              Invoice
+            </span>
+          </span>
+
+          {/* tiny accent pill */}
+          <span className="
+    h-[6px] w-8 rounded-full 
+    bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
+    opacity-80 group-hover:opacity-100 transition-opacity
+  " />
+        </Link>
+
 
         {/* DESKTOP ACTIONS */}
         <div className="hidden md:flex items-center gap-3">
-          {/* Dashboard (signed-in) */}
+
+          {/* Dashboard (Signed-in) */}
           <SignedIn>
-            <a href="/dashboard">
+            <Link to="/dashboard">
               <Button className="bg-[#4f46e5] hover:bg-[#4338ca] text-white">
                 Dashboard
               </Button>
-            </a>
+            </Link>
           </SignedIn>
 
-          {/* Sign In (signed-out) */}
+          {/* Sign In (Signed-out) */}
           <SignedOut>
-            <a href="/sign-in">
+            <Link to="/sign-in">
               <Button variant="outline" className="hover:bg-white/30">
                 Sign In
               </Button>
-            </a>
+            </Link>
           </SignedOut>
 
-          {/* User Avatar */}
+          {/* Avatar */}
           <SignedIn>
             <UserButton
               appearance={{
                 elements: {
                   rootBox: "w-12 h-12",
-                  // avatarBox: "w-12 h-12 border border-white/40 rounded-full shadow-sm",
                 },
               }}
             />
@@ -89,7 +108,7 @@ export default function Header() {
         </button>
       </div>
 
-      {/* MOBILE DROPDOWN MENU */}
+      {/* MOBILE DROPDOWN */}
       {mobileOpen && (
         <motion.div
           initial={{ opacity: 0, y: -6 }}
@@ -108,20 +127,20 @@ export default function Header() {
         >
           {/* Dashboard */}
           <SignedIn>
-            <a href="/sign-in">
+            <Link to="/dashboard">
               <Button className="w-full bg-[#4f46e5] hover:bg-[#4338ca] text-white">
                 Dashboard
               </Button>
-            </a>
+            </Link>
           </SignedIn>
 
           {/* Sign in */}
           <SignedOut>
-            <a href="/sign-in">
+            <Link to="/sign-in">
               <Button className="w-full" variant="outline">
                 Sign In
               </Button>
-            </a>
+            </Link>
           </SignedOut>
 
           {/* Theme Toggle */}
