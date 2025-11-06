@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Sparkles, FileText, Palette, Receipt, Shield, Timer } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import {
   Accordion,
@@ -16,14 +17,16 @@ export default function Home() {
   return (
     <main className="relative min-h-screen text-[#1B1B1B] dark:text-white transition-colors">
 
-      {/* Full-screen soft gradient background */}
-      <div className="fixed inset-0 -z-20 bg-gradient-to-b from-[#eef2ff] via-white to-[#f7faff] dark:from-[#0b0d13] dark:via-[#0d0f16] dark:to-black" />
+      {/* Full-screen gradient background */}
+      <div className="fixed inset-0 -z-20 bg-gradient-to-b 
+        from-[#eef2ff] via-white to-[#f7faff]
+        dark:from-[#0b0d13] dark:via-[#0d0f16] dark:to-black"
+      />
 
-      {/* Header */}
       <Header />
 
       {/* HERO SECTION */}
-      <section className="relative pt-32 pb-32 px-6 md:px-12 max-w-4xl mx-auto text-center">
+      <section className="relative pt-32 pb-32 px-6 md:px-12 max-w-5xl mx-auto text-center">
 
         <motion.h1
           initial={{ opacity: 0, y: 25 }}
@@ -31,7 +34,7 @@ export default function Home() {
           transition={{ duration: 0.7 }}
           className="text-4xl md:text-6xl font-extrabold leading-tight mx-auto max-w-3xl"
         >
-          The Smarter Way to  
+          The Smarter Way to
           <br />
           <span className="text-[#4f46e5]">Create & Manage Invoices</span>
         </motion.h1>
@@ -42,26 +45,26 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           className="mt-6 text-lg text-gray-700 dark:text-gray-300 max-w-xl mx-auto"
         >
-          Build polished invoices in minutes — with real-time preview, tax tools, branding, and instant PDF export.
+          Build polished invoices in minutes - with real-time preview, tax tools, branding, and instant PDF export.
         </motion.p>
 
-        {/* Hero Buttons */}
+        {/* HERO BUTTONS */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <a href="/dashboard">
+          <Link to="/dashboard">
             <Button
               size="lg"
               className="px-10 py-5 text-lg bg-[#4f46e5] hover:bg-[#4338ca] text-white shadow-xl"
             >
               Start Building
             </Button>
-          </a>
+          </Link>
 
-          <a href="#features">
+          <Link to="#features">
             <Button
               size="lg"
               variant="outline"
@@ -73,7 +76,7 @@ export default function Home() {
             >
               Explore Features
             </Button>
-          </a>
+          </Link>
         </motion.div>
 
       </section>
@@ -88,7 +91,7 @@ export default function Home() {
           {[
             {
               title: "Add Your Details",
-              desc: "Fill From/To info, invoice metadata, line items, taxes and charges.",
+              desc: "Fill From/To details, invoice metadata, line items, taxes and charges.",
             },
             {
               title: "Customize & Preview",
@@ -106,7 +109,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
               className="
-                border rounded-2xl p-8 shadow-xl 
+                border rounded-2xl p-8 shadow-xl
                 backdrop-blur-xl
                 bg-white/30 dark:bg-neutral-900/20
                 border-white/40 dark:border-white/10
@@ -124,7 +127,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURES SECTION */}
+      {/* FEATURES */}
       <section id="features" className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-14">
           Powerful Features Designed for You
@@ -137,7 +140,7 @@ export default function Home() {
             { title: "Brand Colors", desc: "Match invoices with your brand theme.", icon: Palette },
             { title: "Saved Invoices", desc: "Locally stored and instantly accessible.", icon: Receipt },
             { title: "Secure & Private", desc: "Your invoice data never leaves your device.", icon: Shield },
-            { title: "Fast & Lightweight", desc: "Smooth and optimized experience.", icon: Timer },
+            { title: "Fast & Lightweight", desc: "Smooth and optimized performance.", icon: Timer },
           ].map((f, i) => (
             <motion.div
               key={i}
@@ -163,13 +166,18 @@ export default function Home() {
 
       {/* CTA SECTION */}
       <section className="py-28 px-6 md:px-12">
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
           className="
-            max-w-5xl mx-auto text-center p-14 rounded-3xl
-            bg-white/30 dark:bg-white/10 backdrop-blur-xl
-            border border-white/40 dark:border-white/10
-            shadow-2xl
-          "
+      max-w-5xl mx-auto text-center p-14 rounded-2xl
+      border
+      backdrop-blur-xl
+      bg-white/30 dark:bg-neutral-900/20
+      border-white/40 dark:border-white/10
+      shadow-xl"
         >
           <h3 className="text-3xl md:text-4xl font-bold">
             Create Your First Invoice Today
@@ -179,29 +187,34 @@ export default function Home() {
             Experience the fastest and most intuitive invoice builder designed for professionals.
           </p>
 
-          <a href="/dashboard">
+          <Link to="/dashboard">
             <motion.div
               initial={{ y: 0 }}
               animate={{ y: [-6, 0, -6] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                duration: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
               className="inline-block"
             >
               <Button
                 size="lg"
                 className="
-                  mt-10 px-12 py-6 text-lg font-semibold
-                  bg-[#4f46e5] hover:bg-[#4338ca]
-                  text-white shadow-xl rounded-full
-                "
+            mt-10 px-12 py-6 text-lg font-semibold
+            bg-[#4f46e5] hover:bg-[#4338ca]
+            text-white shadow-xl rounded-full
+          "
               >
                 Launch Builder
               </Button>
             </motion.div>
-          </a>
-        </div>
+          </Link>
+        </motion.div>
       </section>
 
-      {/* FAQ — full long version you had earlier */}
+
+      {/* FAQ — full detailed version */}
       <section className="px-6 md:px-12 py-20 max-w-5xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
           Frequently Asked Questions
@@ -212,47 +225,43 @@ export default function Home() {
           <AccordionItem value="item-1">
             <AccordionTrigger>Is FluxInvoice completely free to use?</AccordionTrigger>
             <AccordionContent>
-              Yes — all invoice-building features, including line items, taxes, discounts,
-              logo uploads, and PDF export, are fully free and run inside your browser.
+              Yes — all invoice-building features, including line items, taxes,
+              discounts, logo uploads, and PDF export, are completely free and run directly inside your browser with no usage limits.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-2">
             <AccordionTrigger>Can I create professional PDFs?</AccordionTrigger>
             <AccordionContent>
-              PDFs are high-resolution, clean, and automatically formatted to a single page
-              — ideal for clients and documentation.
+              FluxInvoice generates high-resolution, print-ready PDFs formatted cleanly onto a single page — perfect for clients.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-3">
             <AccordionTrigger>What happens to my saved invoices?</AccordionTrigger>
             <AccordionContent>
-              All saved invoices stay securely inside your browser using LocalStorage and
-              never leave your device.
+              All invoices are stored securely in your browser using LocalStorage. They never leave your device.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-4">
             <AccordionTrigger>Do I need an account to use the builder?</AccordionTrigger>
             <AccordionContent>
-              No — an account is optional. If you sign in, you unlock dashboard access and
-              a consistent multi-device experience.
+              An account is optional. If you sign in, you unlock dashboard access and multi-device consistency.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-5">
             <AccordionTrigger>Can I customize items, taxes, and totals?</AccordionTrigger>
             <AccordionContent>
-              Yes — add unlimited line items, apply custom tax percentages, add descriptions,
-              and adjust discounts, shipping, and totals.
+              Yes, you can add unlimited line items, descriptions, tax percentages, discounts, shipping, and more.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-6">
-            <AccordionTrigger>Does FluxInvoice support brand identity?</AccordionTrigger>
+            <AccordionTrigger>Does FluxInvoice support logos and brand identity?</AccordionTrigger>
             <AccordionContent>
-              Yes — upload a business logo and signature to create on-brand, professional invoices instantly.
+              Yes, you can upload your high-quality logo and signature to brand your invoice professionally.
             </AccordionContent>
           </AccordionItem>
 
@@ -266,3 +275,4 @@ export default function Home() {
     </main>
   );
 }
+
