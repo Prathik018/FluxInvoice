@@ -30,7 +30,7 @@ export default function Header() {
           href="/"
           className="text-xl font-bold tracking-tight text-black dark:text-white"
         >
-          fluxInvoice
+          FluxInvoice
         </a>
 
         {/* DESKTOP ACTIONS */}

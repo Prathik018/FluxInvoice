@@ -1,18 +1,22 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Menu, FilePlus2, LayoutDashboard, Home, Settings } from "lucide-react";
+import { Menu, FilePlus2, LayoutDashboard, Home, Settings, Archive } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [open, setOpen] = useState(true);
 
+  // this is used for react router navigation
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen flex bg-lightBg dark:bg-darkBg transition-colors">
       
-      {/* // SIDEBAR */}
+      {/* sidebar */}
       <motion.aside
         animate={{ width: open ? 260 : 70 }}
         className="
@@ -22,7 +26,7 @@ export default function Dashboard() {
           flex flex-col transition-all duration-300
         "
       >
-        {/* Sidebar Header */}
+        {/* logo and toggle */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-black/10 dark:border-white/10">
           <h1
             className={`font-bold text-xl transition-all ${
@@ -42,62 +46,75 @@ export default function Dashboard() {
           </Button>
         </div>
 
-        {/* Navigation */}
+        {/* navigation links */}
         <nav className="flex flex-col gap-2 p-4 text-gray-700 dark:text-gray-200">
 
-          <a
-            href="/"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg 
-              hover:bg-black/10 dark:hover:bg-white/10 transition"
+          {/* home */}
+          <div
+            onClick={() => navigate("/")}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition cursor-pointer"
           >
             <Home className="h-5 w-5" />
             {open && <span>Home</span>}
-          </a>
+          </div>
 
-          <a
-            href="/dashboard"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg 
-              bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10"
+          {/* dashboard */}
+          <div
+            onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 cursor-pointer"
           >
             <LayoutDashboard className="h-5 w-5" />
             {open && <span>Dashboard</span>}
-          </a>
+          </div>
 
-          <a
-            href="/dashboard/new-invoice"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg 
-              hover:bg-black/10 dark:hover:bg-white/10 transition"
+          {/* saved invoices */}
+          <div
+            onClick={() => navigate("/dashboard/invoices")}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition cursor-pointer"
+          >
+            <Archive className="h-5 w-5" />
+            {open && <span>Saved Invoices</span>}
+          </div>
+
+          {/* create invoice */}
+          <div
+            onClick={() => navigate("/dashboard/new-invoice")}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition cursor-pointer"
           >
             <FilePlus2 className="h-5 w-5" />
             {open && <span>Create Invoice</span>}
-          </a>
+          </div>
 
-          <a
-            className="flex items-center gap-3 px-3 py-2 rounded-lg 
-              hover:bg-black/10 dark:hover:bg-white/10 transition cursor-pointer"
+          {/* settings */}
+          <div
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition cursor-pointer"
           >
             <Settings className="h-5 w-5" />
             {open && <span>Settings</span>}
-          </a>
-
+          </div>
         </nav>
       </motion.aside>
 
-      {/* // MAIN CONTENT */}
+      {/* main */}
       <section className="flex-1 p-8">
 
-        {/* TOP HEADER */}
+        {/* top header */}
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-3xl font-bold text-[#1B1B1B] dark:text-white">
-            Invoice Builder
+            Dashboard
           </h2>
 
           <div className="flex items-center gap-3">
-            <Button className="bg-[#4f46e5] hover:bg-[#4338ca] text-white">
+
+            {/* new invoice button */}
+            <Button
+              className="bg-[#4f46e5] hover:bg-[#4338ca] text-white"
+              onClick={() => navigate("/dashboard/new-invoice")}
+            >
               + New Invoice
             </Button>
 
-            {/* User Avatar */}
+            {/* avatar */}
             <SignedIn>
               <UserButton 
                 appearance={{
@@ -110,7 +127,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* CONTENT BOX */}
+        {/* main content */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,16 +139,15 @@ export default function Dashboard() {
           "
         >
           <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            Builder Coming Soon...
+            Welcome to your dashboard
           </h3>
 
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            This is where your invoice sections — From, To, Details, Line Items,
-            Summary, Payments, etc — will be added.
+            You can create, edit, save and manage your invoices.
           </p>
 
           <p className="mt-4 text-gray-500 dark:text-gray-400">
-            Tell me when you want me to generate the entire builder UI.
+            Use the left sidebar to navigate between pages.
           </p>
         </motion.div>
 

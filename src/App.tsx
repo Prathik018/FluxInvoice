@@ -4,6 +4,9 @@ import Dashboard from "./pages/Dashboard";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
+import NewInvoice from "@/pages/NewInvoice";
+import SavedInvoices from "./pages/SavedInvoices";
+
 
 function App() {
   return (
@@ -11,10 +14,9 @@ function App() {
       {/* Public routes */}
       <Route path="/" element={<Home />} />
       <Route path="/sign-in/*" element={<SignInPage />} />
-<Route path="/sign-up/*" element={<SignUpPage />} />
+      <Route path="/sign-up/*" element={<SignUpPage />} />
 
-
-      {/* Protected routes */}
+      {/* Protected dashboard */}
       <Route
         path="/dashboard"
         element={
@@ -22,6 +24,7 @@ function App() {
             <SignedIn>
               <Dashboard />
             </SignedIn>
+
             <SignedOut>
               <RedirectToSignIn />
             </SignedOut>
@@ -29,20 +32,35 @@ function App() {
         }
       />
 
+      {/* Protected new invoice page */}
       <Route
         path="/dashboard/new-invoice"
+
         element={
           <>
             <SignedIn>
-              <div>New Invoice Page Coming Soon...</div>
+              <NewInvoice />   {/* ✅ your full builder UI */}
             </SignedIn>
+
             <SignedOut>
               <RedirectToSignIn />
             </SignedOut>
           </>
         }
       />
+      <Route
+        path="/dashboard/invoices"
+        element={
+          <>
+            <SignedIn><SavedInvoices /></SignedIn>
+            <SignedOut><RedirectToSignIn /></SignedOut>
+          </>
+        }
+      />
 
+
+
+      {/* 404 */}
       <Route path="*" element={<h1>404 - Page Not Found</h1>} />
     </Routes>
   );
