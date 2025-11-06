@@ -3,13 +3,7 @@
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import {
-  Sparkles,
-  FileText,
-  Palette,
-  Receipt,
-  Check
-} from "lucide-react";
+import { Sparkles, FileText, Palette, Receipt, CheckCircle, Shield, Timer } from "lucide-react";
 
 import {
   Accordion,
@@ -20,80 +14,118 @@ import {
 
 export default function Home() {
   return (
-<main className="min-h-screen bg-lightBg dark:bg-darkBg text-[#1B1B1B] dark:text-white transition-colors">
-
-      {/* // HEADER */}
+    <main className="min-h-screen bg-lightBg dark:bg-darkBg text-[#1B1B1B] dark:text-white transition-colors">
+      
+      {/* Header */}
       <Header />
 
-      {/* // HERO SECTION */}
-      <section className="px-6 md:px-12 py-20 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      {/* HERO SECTION */}
+      <section className="px-6 md:px-12 pt-20 pb-28 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-14 items-center">
 
-          {/* Left Content */}
+          {/* Text */}
           <motion.div
             initial={{ opacity: 0, x: -25 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
           >
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
-              Create Beautiful
-              <span className="text-[#4f46e5]"> Invoices</span>
-              <br /> In Seconds.
+              The Smarter Way to  
+              <span className="text-[#4f46e5]"> Create Invoices</span>
             </h1>
 
-            <p className="mt-4 text-lg text-gray-700 dark:text-gray-300 max-w-md">
-              Build, preview, customize, and download invoices instantly.
-              Clean UI, live preview, tax controls & more — right in your browser.
+            <p className="mt-5 text-lg text-gray-700 dark:text-gray-300 max-w-md">
+              Save hours of manual work and create polished, tax-ready invoices instantly.
+              Build, preview, customize, and download - all in one seamless workspace.
             </p>
 
-            <div className="mt-6 flex gap-4">
+            <div className="mt-8 flex gap-4">
               <a href="/dashboard">
-                <Button size="lg" className="bg-[#4f46e5] hover:bg-[#4338ca] text-white">
+                <Button size="lg" className="bg-[#4f46e5] hover:bg-[#4338ca] text-white px-8">
                   Start Building
                 </Button>
               </a>
 
               <a href="#features">
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="px-8">
                   Explore Features
                 </Button>
               </a>
             </div>
           </motion.div>
 
-          {/* Right Side Illustration */}
+          {/* Abstract Illustration */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-            className="flex justify-center"
+            transition={{ duration: 0.8 }}
+            className="flex justify-center relative"
           >
-            <div className="rounded-xl border shadow-xl bg-white dark:bg-neutral-900 p-4">
-              <img
-                src="/sample-logo.png"
-                alt="Invoice Preview"
-                className="rounded-md w-[420px] h-[300px] object-contain"
-              />
+            <div className="w-[260px] h-[260px] rounded-full bg-[#4f46e5]/20 dark:bg-[#4f46e5]/30 blur-3xl absolute -bottom-10"></div>
+            <div className="w-[240px] h-[240px] rounded-xl bg-white dark:bg-neutral-900 border shadow-xl flex items-center justify-center relative z-10">
+              <Sparkles className="h-20 w-20 text-[#4f46e5]" />
             </div>
           </motion.div>
 
         </div>
       </section>
 
-      {/* // FEATURES SECTION */}
+      {/* HOW IT WORKS */}
+      <section className="px-6 md:px-12 py-20 max-w-7xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          How It Works
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-10">
+          {[
+            {
+              step: "1",
+              title: "Add Your Details",
+              desc: "Fill out From/To information, invoice details, line items, and payment fields."
+            },
+            {
+              step: "2",
+              title: "Customize & Preview",
+              desc: "Apply theme colors, add taxes, discounts, signatures, and live-preview instantly."
+            },
+            {
+              step: "3",
+              title: "Download or Share",
+              desc: "Export as PDF, email it, or save it locally to access any time."
+            }
+          ].map((s, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
+              className="bg-white dark:bg-neutral-900 shadow-md border dark:border-neutral-700 rounded-xl p-8 text-center"
+            >
+              <div className="mx-auto w-12 h-12 rounded-full bg-[#4f46e5] text-white flex items-center justify-center text-xl font-bold">
+                {s.step}
+              </div>
+              <h3 className="mt-5 text-xl font-semibold">{s.title}</h3>
+              <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">{s.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* FEATURES SECTION */}
       <section id="features" className="px-6 md:px-12 py-20 max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
-          Everything You Need in an Invoice Builder
+          Powerful Features Designed for You
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { title: "Live Preview", desc: "See changes instantly as you type.", icon: Sparkles },
-            { title: "Multiple Templates", desc: "Choose Classic or Compact.", icon: FileText },
-            { title: "Theme Colors", desc: "Match your brand identity.", icon: Palette },
-            { title: "Save in Browser", desc: "Load invoices anytime.", icon: Receipt },
-            { title: "Custom Fields", desc: "VAT, GST & more.", icon: Check },
-            { title: "Tax & Discounts", desc: "Item-level taxes & totals.", icon: Check }
+            { title: "Live Preview", desc: "Changes update instantly as you type.", icon: Sparkles },
+            { title: "Custom Fields", desc: "Add VAT, GST, notes & custom tags.", icon: FileText },
+            { title: "Theme Colors", desc: "Choose accent colors matching your brand.", icon: Palette },
+            { title: "Save in Browser", desc: "Invoices stored locally with one click.", icon: Receipt },
+            { title: "Highly Secure", desc: "All your data stays on your device.", icon: Shield },
+            { title: "Fast & Lightweight", desc: "Optimized for speed and usability.", icon: Timer }
           ].map((f, index) => (
             <motion.div
               key={index}
@@ -111,47 +143,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* // TEMPLATE SHOWCASE */}
-      <section className="px-6 md:px-12 py-20 max-w-7xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
-          Choose Your Preferred Template
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {[
-            { name: "Classic Template", img: "/classic-template-preview.png" },
-            { name: "Compact Template", img: "/compact-template-preview.png" }
-          ].map((t, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4 }}
-              className="bg-white dark:bg-neutral-900 rounded-xl border dark:border-neutral-700 shadow-sm overflow-hidden"
-            >
-              <div className="p-4 border-b dark:border-neutral-700 font-medium">
-                {t.name}
-              </div>
-              <div className="p-4">
-                <div className="rounded-lg border dark:border-neutral-700 overflow-hidden">
-                  <img src={t.img} alt={t.name} className="w-full object-cover" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* // CTA SECTION */}
+      {/* CTA SECTION */}
       <section className="py-20 px-6 md:px-12 bg-[#F0F8FF] dark:bg-[#0A0F13] text-[#1B1B1B] dark:text-white transition-colors">
         <div className="max-w-5xl mx-auto text-center">
           <h3 className="text-3xl md:text-4xl font-bold">
-            Ready to Create Your First Invoice?
+            Create Your First Invoice Today
           </h3>
 
           <p className="mt-4 text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-            Build, preview, customize, and download polished invoices with ease.
+            Experience an effortless way to build, customize, and share invoices in seconds.
           </p>
 
           <a href="/dashboard">
@@ -168,20 +168,19 @@ export default function Home() {
               <Button
                 size="lg"
                 className="
-            mt-10 px-10 py-6 text-lg font-semibold
-            bg-[#4f46e5] hover:bg-[#4338ca]
-            text-white shadow-xl rounded-full
-          "
+                mt-10 px-10 py-6 text-lg font-semibold
+                bg-[#4f46e5] hover:bg-[#4338ca]
+                text-white shadow-xl rounded-full
+              "
               >
-                Launch Invoice Builder
+                Launch Builder
               </Button>
             </motion.div>
           </a>
         </div>
       </section>
 
-
-      {/* // FAQ SECTION */}
+      {/* FAQ SECTION */}
       <section className="px-6 md:px-12 py-20 max-w-5xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
           Frequently Asked Questions
@@ -191,36 +190,36 @@ export default function Home() {
           <AccordionItem value="item-1">
             <AccordionTrigger>Is fluxInvoice free?</AccordionTrigger>
             <AccordionContent>
-              Yes! All core features run inside your browser—no backend needed.
+              Yes — the core builder runs fully in your browser.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-2">
             <AccordionTrigger>Can I export invoices as PDF?</AccordionTrigger>
             <AccordionContent>
-              Yes—PDF generation is built directly into the preview screen.
+              Yes — professional PDF export is built-in.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-3">
-            <AccordionTrigger>Are invoices saved automatically?</AccordionTrigger>
+            <AccordionTrigger>Do I need an account?</AccordionTrigger>
             <AccordionContent>
-              Yes, invoices are stored in your browser using localStorage.
+              Signing in lets you sync settings, but the builder works without it.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-4">
-            <AccordionTrigger>Can I change the theme color?</AccordionTrigger>
+            <AccordionTrigger>Is my data stored safely?</AccordionTrigger>
             <AccordionContent>
-              Absolutely! Choose any accent color in the builder.
+              Yes — all invoice data is stored locally on your device.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </section>
 
-      {/* // FOOTER */}
+      {/* FOOTER */}
       <footer className="border-t dark:border-neutral-700 py-6 text-center text-gray-700 dark:text-gray-300">
-        © {new Date().getFullYear()} fluxInvoice — Built with React, Tailwind, Motion & shadcn/ui
+        © {new Date().getFullYear()} fluxInvoice. All rights reserved.
       </footer>
 
     </main>
