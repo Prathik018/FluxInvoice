@@ -5,25 +5,33 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
   const { signOut } = useClerk();
 
   useEffect(() => {
-    const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
-      // Get navigation entries safely and cast to correct type
-      const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    let isReload = false;
 
-      const navType = navEntry?.type;
+    // Detect refresh using "beforeunload" + temp flag
+    window.addEventListener("beforeunload", (e) => {
+      isReload = true;
+    });
 
-      // reload or back/forward should NOT log out
-      if (navType === "reload" || navType === "back_forward") {
-        return;
+    // Detect tab close / browser close only
+    const handleVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        setTimeout(() => {
+          // If reload happened, do NOT logout
+          if (isReload) return;
+
+          // If navigating using link, do NOT logout
+          if (performance.getEntriesByType("navigation")[0]?.type === "navigate") return;
+
+          // Real tab close or browser close
+          signOut({ redirectUrl: "/" });
+        }, 150);
       }
-
-      // USER IS CLOSING TAB or BROWSER
-      signOut({ redirectUrl: "/" });
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [signOut]);
 
