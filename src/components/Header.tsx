@@ -1,15 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/components/theme-provider";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";              // ✅ Removed Sun, Moon
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 export default function Header() {
-  const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -30,12 +28,12 @@ export default function Header() {
         <Link to="/" aria-label="FluxInvoice logo" className="group inline-flex items-center gap-2">
           <span
             className="
-      text-2xl md:text-[28px] font-extrabold tracking-tight
-      [font-feature-settings:'ss01','ss02','cv11'] 
-      bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
-      bg-clip-text text-transparent
-      transition-transform duration-300 group-hover:scale-[1.02]
-    "
+              text-2xl md:text-[28px] font-extrabold tracking-tight
+              [font-feature-settings:'ss01','ss02','cv11'] 
+              bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
+              bg-clip-text text-transparent
+              transition-transform duration-300 group-hover:scale-[1.02]
+            "
           >
             Flux
             <span className="text-black dark:text-white bg-clip-text">
@@ -43,18 +41,17 @@ export default function Header() {
             </span>
           </span>
 
-          {/* tiny accent pill */}
-          <span className="
-    h-[6px] w-8 rounded-full 
-    bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
-    opacity-80 group-hover:opacity-100 transition-opacity
-  " />
+          <span
+            className="
+              h-[6px] w-8 rounded-full 
+              bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
+              opacity-80 group-hover:opacity-100 transition-opacity
+            "
+          />
         </Link>
-
 
         {/* DESKTOP ACTIONS */}
         <div className="hidden md:flex items-center gap-3">
-
           {/* Dashboard (Signed-in) */}
           <SignedIn>
             <Link to="/dashboard">
@@ -83,20 +80,6 @@ export default function Header() {
               }}
             />
           </SignedIn>
-
-          {/* Theme Toggle */}
-          <Button
-            size="icon"
-            variant="outline"
-            className="backdrop-blur-md bg-white/40 dark:bg-black/40 border-white/20 dark:border-black/20"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5 text-yellow-300" />
-            ) : (
-              <Moon className="h-5 w-5 text-gray-800" />
-            )}
-          </Button>
         </div>
 
         {/* MOBILE MENU BUTTON */}
@@ -142,23 +125,6 @@ export default function Header() {
               </Button>
             </Link>
           </SignedOut>
-
-          {/* Theme Toggle */}
-          <Button
-            className="w-full"
-            variant="outline"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
-              <span className="flex items-center gap-2">
-                <Sun className="h-5 w-5" /> Light Mode
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Moon className="h-5 w-5" /> Dark Mode
-              </span>
-            )}
-          </Button>
 
           {/* Avatar */}
           <SignedIn>

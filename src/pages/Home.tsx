@@ -82,7 +82,7 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
+      <section className="px-6 md:px-12 py-38 max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
           How It Works
         </h2>
@@ -225,7 +225,7 @@ export default function Home() {
           <AccordionItem value="item-1">
             <AccordionTrigger>Is FluxInvoice completely free to use?</AccordionTrigger>
             <AccordionContent>
-              Yes — all invoice-building features, including line items, taxes,
+              Yes, all invoice-building features, including line items, taxes,
               discounts, logo uploads, and PDF export, are completely free and run directly inside your browser with no usage limits.
             </AccordionContent>
           </AccordionItem>
@@ -233,7 +233,7 @@ export default function Home() {
           <AccordionItem value="item-2">
             <AccordionTrigger>Can I create professional PDFs?</AccordionTrigger>
             <AccordionContent>
-              FluxInvoice generates high-resolution, print-ready PDFs formatted cleanly onto a single page — perfect for clients.
+              FluxInvoice generates high-resolution, print-ready PDFs formatted cleanly onto a single page perfect for clients.
             </AccordionContent>
           </AccordionItem>
 
@@ -275,4 +275,14 @@ export default function Home() {
     </main>
   );
 }
+
+
+
+
+
+
+
+
+
+
 
