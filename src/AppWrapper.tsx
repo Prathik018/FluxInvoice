@@ -8,7 +8,7 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
     let isReload = false;
 
     // Detect refresh using "beforeunload" + temp flag
-    window.addEventListener("beforeunload", (e) => {
+    window.addEventListener("beforeunload", () => {
       isReload = true;
     });
 
@@ -20,7 +20,10 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
           if (isReload) return;
 
           // If navigating using link, do NOT logout
-          if (performance.getEntriesByType("navigation")[0]?.type === "navigate") return;
+          const nav = performance.getEntriesByType("navigation");
+          const navEntry = nav[0] as PerformanceNavigationTiming | undefined;
+
+          if (navEntry?.type === "navigate") return;
 
           // Real tab close or browser close
           signOut({ redirectUrl: "/" });
