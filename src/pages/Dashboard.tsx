@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FilePlus2, LayoutDashboard, Home, Archive, Settings } from "lucide-react";
+import { FilePlus2, Home, Archive, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
