@@ -5,15 +5,18 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
   const { signOut } = useClerk();
 
   useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      const navType = performance.getEntriesByType("navigation")[0]?.type;
+    const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
+      // Get navigation entries safely and cast to correct type
+      const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
 
-      // If this is a refresh or back/forward navigation, DO NOT logout
+      const navType = navEntry?.type;
+
+      // reload or back/forward should NOT log out
       if (navType === "reload" || navType === "back_forward") {
         return;
       }
 
-      // If user is closing the tab or browser — LOG OUT
+      // USER IS CLOSING TAB or BROWSER
       signOut({ redirectUrl: "/" });
     };
 
