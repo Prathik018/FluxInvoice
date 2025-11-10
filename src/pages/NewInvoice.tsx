@@ -735,7 +735,7 @@ export default function NewInvoice() {
                 </div>
               </div>
 
-              {/* From / To */}
+              {/* from and to details */}
               <div className="mt-6 grid md:grid-cols-2 gap-6">
                 <div className="rounded-lg p-4 border" style={{ borderColor: theme.primaryBorder }}>
                   <h3 className="font-semibold mb-2" style={{ color: theme.primary }}>
