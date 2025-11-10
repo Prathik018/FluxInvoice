@@ -35,10 +35,10 @@ type Party = {
   name: string;
   email: string;
   phone: string;
-  address?: string;
-  city?: string;
-  zip?: string;
-  country?: string;
+  address: string;
+  city: string;
+  zip: string;
+  country: string;
 };
 
 type LineItem = {
