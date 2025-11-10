@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";              // ✅ Removed Sun, Moon
+import { Menu, X } from "lucide-react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -11,130 +11,99 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="w-full flex justify-center pt-6 px-4 sticky top-0 z-50">
+    <header className="w-full flex justify-center pt-6 px-4 sticky top-4 z-50 pointer-events-none">
+      {/* Center Dock Header */}
       <div
         className="
-        max-w-5xl w-full
-        flex items-center justify-between
-        px-6 py-3
-        rounded-2xl
-        border shadow-xl
-        bg-white/20 dark:bg-neutral-900/10
-        backdrop-blur-xl
-        transition-all
-      "
+          pointer-events-auto
+          backdrop-blur-sm
+          bg-white/10 border border-white/20
+          shadow-2xl
+          rounded-3xl
+          px-6 py-2
+          max-w-3xl w-full
+          flex items-center justify-between
+          transition-all
+        "
       >
         {/* Logo */}
-        <Link to="/" aria-label="FluxInvoice logo" className="group inline-flex items-center gap-2">
-          <span
-            className="
-              text-2xl md:text-[28px] font-extrabold tracking-tight
-              [font-feature-settings:'ss01','ss02','cv11'] 
-              bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
-              bg-clip-text text-transparent
-              transition-transform duration-300 group-hover:scale-[1.02]
-            "
-          >
-            Flux
-            <span className="text-black dark:text-white bg-clip-text">
-              Invoice
-            </span>
-          </span>
-
-          <span
-            className="
-              h-[6px] w-8 rounded-full 
-              bg-gradient-to-r from-[#6366F1] via-[#22D3EE] to-[#10B981]
-              opacity-80 group-hover:opacity-100 transition-opacity
-            "
-          />
+        <Link
+          to="/"
+          aria-label="FluxInvoice logo"
+          className="group inline-flex items-center gap-2"
+        >
+         <span className="text-white font-extrabold tracking-wider text-2xl">FluxInvoice</span>
         </Link>
 
-        {/* DESKTOP ACTIONS */}
+        {/* Desktop Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          {/* Dashboard (Signed-in) */}
           <SignedIn>
             <Link to="/dashboard">
-              <Button className="bg-[#4f46e5] hover:bg-[#4338ca] text-white">
-                Dashboard
-              </Button>
+              <Button className="btn-primary rounded-full">Dashboard</Button>
             </Link>
           </SignedIn>
 
-          {/* Sign In (Signed-out) */}
           <SignedOut>
             <Link to="/sign-in">
-              <Button variant="outline" className="hover:bg-white/30">
-                Sign In
-              </Button>
+              <Button variant="outline" className="btn-primary">Sign In</Button>
             </Link>
           </SignedOut>
 
-          {/* Avatar */}
           <SignedIn>
             <UserButton
               appearance={{
                 elements: {
-                  rootBox: "w-12 h-12",
+                  rootBox: "w-10 h-10",
                 },
               }}
             />
           </SignedIn>
         </div>
 
-        {/* MOBILE MENU BUTTON */}
+        {/* Mobile Trigger */}
         <button
-          className="md:hidden p-2 rounded-lg bg-white/40 dark:bg-black/40 backdrop-blur-lg"
+          className="md:hidden p-2 rounded-xl bg-white/20 backdrop-blur-xl"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* MOBILE DROPDOWN */}
+      {/* Mobile Menu */}
       {mobileOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -6 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
+          exit={{ opacity: 0, y: -10 }}
           className="
-            md:hidden
-            absolute top-[90px]
-            w-[90%]
-            max-w-5xl
-            bg-white/80 dark:bg-neutral-900/80
+            absolute top-[95px]
+            w-[90%] max-w-3xl
+            mx-auto
             backdrop-blur-2xl
-            border rounded-2xl shadow-xl
-            py-4 px-6 space-y-3
+            bg-white/10 border border-white/20
+            rounded-3xl shadow-xl
+            py-4 px-6 space-y-4
           "
         >
-          {/* Dashboard */}
           <SignedIn>
             <Link to="/dashboard">
-              <Button className="w-full bg-[#4f46e5] hover:bg-[#4338ca] text-white">
-                Dashboard
-              </Button>
+              <Button className="btn-primary w-full rounded-full">Dashboard</Button>
             </Link>
           </SignedIn>
 
-          {/* Sign in */}
           <SignedOut>
             <Link to="/sign-in">
-              <Button className="w-full" variant="outline">
-                Sign In
-              </Button>
+              <Button variant="outline" className="w-full rounded-full">Sign In</Button>
             </Link>
           </SignedOut>
 
-          {/* Avatar */}
           <SignedIn>
             <div className="flex justify-center pt-2">
               <UserButton
                 appearance={{
                   elements: {
                     rootBox: "w-16 h-16",
-                    avatarBox:
-                      "w-16 h-16 border border-white/40 rounded-full shadow-md",
+                    avatarBox: "w-16 h-16 border border-white/30 rounded-full shadow-md",
                   },
                 }}
               />
